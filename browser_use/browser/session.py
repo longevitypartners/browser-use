@@ -418,7 +418,7 @@ class BrowserSession(BaseModel):
 
 	_cached_browser_state_summary: Any = PrivateAttr(default=None)
 	_cached_selector_map: dict[int, EnhancedDOMTreeNode] = PrivateAttr(default_factory=dict)
-	_downloaded_files: list[str] = PrivateAttr(default_factory=list)  # Track files downloaded during this session
+	_downloaded_files: list[FileDownloadedEvent] = PrivateAttr(default_factory=list)  # Track files downloaded during this session
 	_closed_popup_messages: list[str] = PrivateAttr(default_factory=list)  # Store messages from auto-closed JavaScript dialogs
 
 	# Watchdogs
@@ -1017,7 +1017,7 @@ class BrowserSession(BaseModel):
 		"""Track downloaded files during this session."""
 		self.logger.debug(f'FileDownloadedEvent received: {event.file_name} at {event.path}')
 		if event.path and event.path not in self._downloaded_files:
-			self._downloaded_files.append(event.path)
+			self._downloaded_files.append(event)
 			self.logger.info(f'📁 Tracked download: {event.file_name} ({len(self._downloaded_files)} total downloads in session)')
 		else:
 			if not event.path:
@@ -2792,11 +2792,11 @@ class BrowserSession(BaseModel):
 			self.logger.debug(f'[DemoMode] Failed to send log: {exc}')
 
 	@property
-	def downloaded_files(self) -> list[str]:
+	def downloaded_files(self) -> list[FileDownloadedEvent]:
 		"""Get list of files downloaded during this browser session.
 
 		Returns:
-			list[str]: List of absolute file paths to downloaded files in this session
+			list[FileDownloadedEvent]: List of file download events in this session
 		"""
 		return self._downloaded_files.copy()
 
