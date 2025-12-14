@@ -442,8 +442,8 @@ class Tools(Generic[Context]):
 			# For remote browsers (is_local=False), we allow absolute remote paths even if not tracked locally
 			if params.path not in available_file_paths:
 				# Also check if it's a recently downloaded file that might not be in available_file_paths yet
-				downloaded_files = browser_session.downloaded_files
-				if params.path not in downloaded_files:
+				downloaded_paths = [event.path for event in browser_session.downloaded_files]
+				if params.path not in downloaded_paths:
 					# Finally, check if it's a file in the FileSystem service
 					if file_system and file_system.get_dir():
 						# Check if the file is actually managed by the FileSystem service
@@ -1688,8 +1688,8 @@ class CodeAgentTools(Tools[Context]):
 			if available_file_paths:
 				if params.path not in available_file_paths:
 					# Also check if it's a recently downloaded file
-					downloaded_files = browser_session.downloaded_files
-					if params.path not in downloaded_files:
+					downloaded_paths = [event.path for event in browser_session.downloaded_files]
+					if params.path not in downloaded_paths:
 						# Finally, check if it's a file in the FileSystem service (if provided)
 						if file_system is not None and file_system.get_dir():
 							# Check if the file is actually managed by the FileSystem service

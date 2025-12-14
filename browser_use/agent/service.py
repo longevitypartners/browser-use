@@ -608,10 +608,10 @@ class Agent(Generic[Context, AgentStructuredOutput]):
 		assert self.browser_session is not None, 'BrowserSession is not set up'
 
 		try:
-			current_downloads = self.browser_session.downloaded_files
-			if current_downloads != self._last_known_downloads:
-				self._update_available_file_paths(current_downloads)
-				self._last_known_downloads = current_downloads
+			current_download_paths = [event.path for event in self.browser_session.downloaded_files]
+			if current_download_paths != self._last_known_downloads:
+				self._update_available_file_paths(current_download_paths)
+				self._last_known_downloads = current_download_paths
 				if context:
 					self.logger.debug(f'📁 {context}: Updated available files')
 		except Exception as e:
