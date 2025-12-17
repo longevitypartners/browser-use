@@ -214,13 +214,14 @@ class DownloadsWatchdog(BaseWatchdog):
 					if file_path:
 						self.logger.debug(f'[DownloadsWatchdog] Download completed: {file_path}')
 						# Track the download
-						self._track_download(file_path)
+						self.logger.debug("[DownloadsWatchdog] Deactivated track download to keep url")
+						#self._track_download(file_path)
 						# Mark as handled to prevent fallback duplicate dispatch
-						try:
-							if guid in self._cdp_downloads_info:
-								self._cdp_downloads_info[guid]['handled'] = True
-						except (KeyError, AttributeError):
-							pass
+						# try:
+						# 	if guid in self._cdp_downloads_info:
+						# 		self._cdp_downloads_info[guid]['handled'] = True
+						# except (KeyError, AttributeError):
+						# 	pass
 					else:
 						# No local file path provided, local polling in _handle_cdp_download will handle it
 						self.logger.debug(
